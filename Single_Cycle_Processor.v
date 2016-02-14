@@ -51,7 +51,7 @@ module Single_Cycle_Processor(
     reg [`REGISTER_WIDTH-1:0] Instruction ;
 	 
 	 rom rom_t ( .clk_t(clk) , .rst_t(rst) , .curr_addr_t(ProgramCounter) ,
-	            .Instruction(InstructionRegister));
+	             .Instruction(InstructionRegister));
  
     //Instantiation of adder
 	 reg [`REGISTER_WIDTH-1:0] val_2_PC_adder = 32'd4;
@@ -69,8 +69,8 @@ module Single_Cycle_Processor(
 	 
 	 ctrl ctrl_t ( .Instruction(inst) , .jal_t(jal) , .jalr_t(jalr_t) , .d_mem_size_t(d_mem_size) ,
 	               .reg_file_wr_back_sel_t(reg_file_wr_back_sel) , .d_mem_wr_en_t(d_mem_wr_en) ,
-						.alu_op2_sel_t(alu_op2_sel) , .d_mem_rd_en_t(d_mem_rd_en) , .reg_file_wr_en_t(reg_file_wr_en),
-						.alu_ctrl_t(alu_ctrl) ) ;
+		       .alu_op2_sel_t(alu_op2_sel) , .d_mem_rd_en_t(d_mem_rd_en) , .reg_file_wr_en_t(reg_file_wr_en),
+		       .alu_ctrl_t(alu_ctrl) ) ;
 						
 						
     //Instantiation of register file 
@@ -81,9 +81,9 @@ module Single_Cycle_Processor(
 	 wire [(`REG_INDEX_WIDTH-1):0] wr_reg_index_t = Instruction[`DST_REG_MSB :`DST_REG_LSB] ;
 	 
 	 reg_file reg_file_t ( .reg_data_1_t(reg_data_1) , .reg_data_2_t(reg_data_2) ,
-                          .rst_t(rst) , .clk_t(clk) , .reg_file_wr_en_t(wr_en) ,.rd_reg_index_1_t(rd_reg_index_1) ,
-                          .rd_reg_index_2_t(rd_reg_index_2) , .wr_reg_index_t(wr_reg_index) , 
-                          .wr_reg_data_t(wr_reg_data));	
+                               .rst_t(rst) , .clk_t(clk) , .reg_file_wr_en_t(wr_en) ,.rd_reg_index_1_t(rd_reg_index_1) ,
+                               .rd_reg_index_2_t(rd_reg_index_2) , .wr_reg_index_t(wr_reg_index) , 
+                               .wr_reg_data_t(wr_reg_data));	
 								 
 								 
 	 // Instantiation of sign extend module
@@ -99,7 +99,7 @@ module Single_Cycle_Processor(
 	  begin 
 	     case (alu_op2_sel_t )
 		   1'b0 : Operand2_t = reg_data_2_t ;
-			1'b1 : Operand2_t = sz_ex_val_t ;
+	           1'b1 : Operand2_t = sz_ex_val_t ;
 	     endcase
 	  end
 	 
@@ -116,9 +116,9 @@ module Single_Cycle_Processor(
 	   case ( reg_file_wr_back_sel_t )
 		 
 		   2'b00 : wr_reg_data_t = ALU_Out_t ;
-			2'b01 : wr_reg_data_t = d_mem_rd_data_t ; ///Should define
-			2'b10 : wr_reg_data_t = Add_4_Out_t ;
-			2'b11 : wr_reg_data_t = Add_Out_t ;
+		   2'b01 : wr_reg_data_t = d_mem_rd_data_t ; ///Should define
+		   2'b10 : wr_reg_data_t = Add_4_Out_t ;
+		   2'b11 : wr_reg_data_t = Add_Out_t ;
 			
 		endcase
 	  end
@@ -137,7 +137,7 @@ module Single_Cycle_Processor(
 	   begin
 		   case ( pc_mux1_sel_t)
 			   1'b0 :  pc_mux1_Out_t = Add_4_Out_t;
-				1'b1 :  pc_mux1_Out_t = Add_Out_t ;
+		           1'b1 :  pc_mux1_Out_t = Add_Out_t ;
 		   endcase
 		end
 		
@@ -148,7 +148,7 @@ module Single_Cycle_Processor(
 	   begin
 		   case ( jalr_t)
 			   1'b0 :  pc_mux2_Out_t = pc_mux1_Out_t;
-				1'b1 :  pc_mux2_Out_t = ALU_Out_t ;
+			   1'b1 :  pc_mux2_Out_t = ALU_Out_t ;
 		   endcase
 		end
 		
@@ -161,7 +161,7 @@ module Single_Cycle_Processor(
 	 //reg [2:0] d_mem_size_t ; declared already in cu
 	 //reg [`REGISTER_WIDTH : 0]  d_mem_wr_data_t == ALU_Out_t;
 	 reg [`DATA_MEM_WORD_SIZE : 0 ] d_mem_rd_data_t;
-    ram ram_t( .d_mem_rd_en_t(d_mem_rd) , .d_mem_wr_en_t(d_mem_wr) , .d_mem_size_t(d_mem_size),
-               .ALU_Out_t(d_mem_addr) ,.reg_data_2_t(d_mem_wr_data) , .d_mem_rd_data_t(d_mem_rd_data) ,
-					. rst_t(rst) , .clk_t(clk) );
+         ram ram_t( .d_mem_rd_en_t(d_mem_rd) , .d_mem_wr_en_t(d_mem_wr) , .d_mem_size_t(d_mem_size),
+                    .ALU_Out_t(d_mem_addr) ,.reg_data_2_t(d_mem_wr_data) , .d_mem_rd_data_t(d_mem_rd_data) ,
+	            . rst_t(rst) , .clk_t(clk) );
 	 endmodule
