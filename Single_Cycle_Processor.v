@@ -34,7 +34,7 @@
 `define REG2_LSB 20
 `define DST_REG_MSB 11
 `define DST_REG_LSB 7
-`define DATA_MEM_WORD_SIZE 8 // 16, 32 etc
+`define DATA_MEM_WORD_SIZE 16 // 8,16, 32 etc
 module Single_Cycle_Processor(
     input rst_t,
     input clk_t
@@ -48,10 +48,14 @@ module Single_Cycle_Processor(
                        .next_addr_t(next_addr) , .curr_addr_t(curr_addr));
   
     //Instantiation of fetch module
-    reg [`REGISTER_WIDTH-1:0] Instruction ;
+   // reg [`REGISTER_WIDTH-1:0] Instruction ;
 	 
-	 rom rom_t ( .clk_t(clk) , .rst_t(rst) , .curr_addr_t(ProgramCounter) ,
-	             .Instruction(InstructionRegister));
+//	 rom rom_t ( .clk_t(clk) , .rst_t(rst) , .curr_addr_t(ProgramCounter) ,
+//	             .Instruction(InstructionRegister));
+
+//Instantiation of distributed ROM 
+
+   dist_ROM dist_ROM_t (.curr_addr_t(a), . Instruction(spo));
  
     //Instantiation of adder
 	 reg [`REGISTER_WIDTH-1:0] val_2_PC_adder = 32'd4;
@@ -64,7 +68,7 @@ module Single_Cycle_Processor(
     reg [(`ALU_CTRL_WIDTH-1):0] alu_ctrl_t ;	
     reg reg_file_wr_en_t , d_mem_rd_en_t , alu_op2_sel_t , d_mem_wr_en_t;
     reg [1:0] reg_file_wr_back_sel_t ;
-	 reg [2:0] d_mem_size_t;
+	 reg [1:0] d_mem_size_t;
 	 reg jal_t , jalr_t ;
 	 
 	 ctrl ctrl_t ( .Instruction(inst) , .jal_t(jal) , .jalr_t(jalr_t) , .d_mem_size_t(d_mem_size) ,
@@ -157,11 +161,21 @@ module Single_Cycle_Processor(
 	
 	  
 	 // Implementation of Data Memory module 
-	 reg d_mem_rd_t , d_mem_wr_t ;
+	 wire  d_mem_wr_en_t ;
+	 parameter DATA_MEM_WORD_SIZE ;
 	 //reg [2:0] d_mem_size_t ; declared already in cu
 	 //reg [`REGISTER_WIDTH : 0]  d_mem_wr_data_t == ALU_Out_t;
-	 reg [`DATA_MEM_WORD_SIZE : 0 ] d_mem_rd_data_t;
-         ram ram_t( .d_mem_rd_en_t(d_mem_rd) , .d_mem_wr_en_t(d_mem_wr) , .d_mem_size_t(d_mem_size),
-                    .ALU_Out_t(d_mem_addr) ,.reg_data_2_t(d_mem_wr_data) , .d_mem_rd_data_t(d_mem_rd_data) ,
-	            . rst_t(rst) , .clk_t(clk) );
+	 
+	 always @ ( d_mem_size_t ) begin 
+	   case (d_mem_size_t)
+               2'b00 : DATA_MEM_WORD_SIZE = 32 ; 
+               //2'b01 : DATA_MEM_WORD_SIZE = 16;
+               2'b10 : DATA_MEM_WORD_SIZE = 8;
+               default : DATA_MEM_WORD_SIZE = 16 ;
+           endcase    
+         end
+         reg [DATA_MEM_WORD_SIZE : 0 ] d_mem_rd_data_t;
+         Dist_RAM Dist_RAM_t( .d_mem_wr_en_t(we) , // .d_mem_size_t(d_mem_size), already taken care of using parameter
+                    .ALU_Out_t(a) ,.reg_data_2_t(d) , .d_mem_rd_data_t(spo) ,
+	            .clk_t(clk) );
 	 endmodule
