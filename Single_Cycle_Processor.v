@@ -162,19 +162,19 @@ module Single_Cycle_Processor(
 	  
 	 // Implementation of Data Memory module 
 	 wire  d_mem_wr_en_t ;
-	 parameter DATA_MEM_WORD_SIZE ;
-	 //reg [2:0] d_mem_size_t ; declared already in cu
+	 
+	 reg [1:0] d_mem_size ; 
 	 //reg [`REGISTER_WIDTH : 0]  d_mem_wr_data_t == ALU_Out_t;
 	 
 	 always @ ( d_mem_size_t ) begin 
 	   case (d_mem_size_t)
-               2'b00 : DATA_MEM_WORD_SIZE = 32 ; 
-               //2'b01 : DATA_MEM_WORD_SIZE = 16;
-               2'b10 : DATA_MEM_WORD_SIZE = 8;
-               default : DATA_MEM_WORD_SIZE = 16 ;
+               2'b00 : d_mem_size = 32 ; 
+               2'b10 : d_mem_size = 8;
+               default : d_mem_size = 16 ;
            endcase    
          end
-         reg [DATA_MEM_WORD_SIZE : 0 ] d_mem_rd_data_t;
+         parameter DATA_MEM_WORD_SIZE = d_mem_size ;
+         reg [DATA_MEM_WORD_SIZE-1 : 0 ] d_mem_rd_data_t;
          Dist_RAM Dist_RAM_t( .d_mem_wr_en_t(we) , // .d_mem_size_t(d_mem_size), already taken care of using parameter
                     .ALU_Out_t(a) ,.reg_data_2_t(d) , .d_mem_rd_data_t(spo) ,
 	            .clk_t(clk) );
