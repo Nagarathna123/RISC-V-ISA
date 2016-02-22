@@ -27,7 +27,7 @@
 `include "sz_ex.v"
 `include "ctrl.v"
 `include "Exec.v"
-// `include "ram.v"
+// `include "ram.v"  
 
 `define REG1_MSB 19
 `define REG1_LSB 15
@@ -169,8 +169,8 @@ module Single_Cycle_Processor(
 	 
 	 reg [4:0] d_mem_word_size ; 
 	 //reg [`REGISTER_WIDTH : 0]  d_mem_wr_data_t == ALU_Out_t;
-	 
-	// always @ ( d_mem_size_t ) begin 
+	   
+	// always    @ ( d_mem_size_t ) begin 
 	 //  case (d_mem_size_t)
      //          2'b00 : d_mem_word_size = 5'd32 ; 
       //         2'b10 : d_mem_word_size = 5'd8;
